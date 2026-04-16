@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login - Checklist</title>
+ 
+ <link rel="manifest" href="manifest.json?v=1">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<link rel="apple-touch-icon" href="icon-192.png">
+
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #e6e6e6;
+    }
+
+    header {
+      background: #2b2b2b;
+      color: white;
+      padding: 15px;
+      display: flex;
+      align-items: center;
+      border-bottom: 4px solid #ff6600;
+    }
+
+    header img {
+      height: 40px;
+      margin-right: 10px;
+    }
+
+    .login-box {
+      width: 350px;
+      margin: 80px auto;
+      background: white;
+      padding: 30px;
+      border-radius: 12px;
+      text-align: center;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    }
+
+    .user-icon {
+      width: 80px;
+      height: 80px;
+      background: #f0f0f0;
+      border-radius: 50%;
+      margin: 0 auto 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      border: 3px solid #ff6600;
+    }
+
+    .user-icon img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .login-box h2 {
+      margin-bottom: 20px;
+      color: #333;
+    }
+
+    /* Estilo para o Select e Input */
+    .login-box select, .login-box input {
+      width: 100%;
+      padding: 12px;
+      margin: 10px 0;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      box-sizing: border-box;
+      font-size: 14px;
+      background-color: white;
+      color: #333;
+    }
+
+    /* Estilo da setinha do select */
+    .login-box select {
+      cursor: pointer;
+      appearance: none;
+      background-image: url('data:image/svg+xml;charset=US-ASCII,<svg%20xmlns="http://www.w3.org/2000/svg"%20width="12"%20height="12"%20viewBox="0%200%2012%2012"><path%20fill="%23666"%20d="M10.293%203.293L6%207.586%201.707%203.293A1%201%200%2000.293%204.707l5%205a1%201%200%20001.414%200l5-5a1%201%200%2010-1.414-1.414z"/></svg>');
+      background-repeat: no-repeat;
+      background-position: right 12px center;
+      background-size: 12px;
+    }
+
+    .login-box button {
+      width: 100%;
+      padding: 12px;
+      background: #ff6600;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      font-size: 16px;
+      cursor: pointer;
+      margin-top: 10px;
+      font-weight: bold;
+    }
+
+    .login-box button:hover {
+      background: #e65c00;
+    }
+
+    .footer-text {
+      margin-top: 20px;
+      font-size: 12px;
+      color: #999;
+    }
+  </style>
+</head>
+
+<body>
+
+  <header>
+    <img src="mizuimg.png" alt="Logo">
+    <h1>Checklist de Inspeção</h1>
+  </header>
+
+  <div class="login-box">
+
+    <div class="user-icon">
+      <img src="https://cdn-icons-png.flaticon.com/512/149/149071.png" alt="Usuário">
+    </div>
+
+    <h2>Acesso ao Sistema</h2>
+
+    <select id="usuario">
+      <option value="" disabled selected>Selecione o Usuário</option>
+      <option value="admin">Administrador</option>
+      <option value="operador">Operador</option>
+    </select>
+
+    <input type="password" id="senha" placeholder="Senha">
+
+    <button onclick="logar()">Entrar</button>
+
+    <div class="footer-text">
+      Mizu Cimentos © 2026
+    </div>
+
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+  <script>
+    function logar() {
+      let user = document.getElementById("usuario").value;
+      let senha = document.getElementById("senha").value;
+
+      // Definição das credenciais fixas
+      const credenciais = {
+        "admin": "mizuadmin",
+        "operador": "mizuoperador"
+      };
+
+      if (!user) {
+        Swal.fire({
+          icon: 'warning',
+          title: 'Atenção',
+          text: 'Selecione um perfil de usuário!',
+          confirmButtonColor: '#ff6600'
+        });
+        return;
+      }
+
+      // Validação
+      if (credenciais[user] === senha) {
+        localStorage.setItem("usuarioLogado", user);
+
+        Swal.fire({
+          icon: 'success',
+          title: 'Bem-vindo!',
+          text: `Acesso como ${user.toUpperCase()} realizado.`,
+          showConfirmButton: false,
+          timer: 1500
+        }).then(() => {
+          window.location.href = "menu.html";
+        });
+      } else {
+        Swal.fire({
+          icon: 'error',
+          title: 'Erro no login',
+          text: 'Senha incorreta para este usuário!',
+          confirmButtonColor: '#ff6600'
+        });
+      }
+    }
+  </script>
+
+</body>
+
+</html>

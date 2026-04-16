@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inspeção: Silo Metálico</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="manifest" href="manifest.json">
+
+    <script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="supabase-config.js"></script>
+
+    <style>
+        #toast { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); padding: 15px 25px; color: white; border-radius: 8px; display: none; z-index: 9999; font-weight: bold; }
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.7); justify-content: center; align-items: center; z-index: 9999; }
+        .modal-conteudo { background: white; padding: 30px; border-radius: 12px; width: 90%; max-width: 450px; box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2); }
+        .modal-conteudo h3 { margin-top: 0; margin-bottom: 15px; color: #333; }
+        .modal-conteudo input, .modal-conteudo textarea { width: 100%; margin: 10px 0; padding: 10px; border: 1px solid #ddd; border-radius: 4px; box-sizing: border-box; }
+        .botoes { display: flex; justify-content: flex-end; gap: 12px; margin-top: 20px; }
+        #btnSalvar { background: #2ecc71; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-weight: bold; }
+        #btnExcluirConfirm { background: #e74c3c; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-weight: bold; }
+        #btnCancelar, #btnExcluirCancelar { background: #95a5a6; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; }
+        .btn-editar, .btn-excluir { margin-top: 10px; margin-right: 5px; cursor: pointer; padding: 6px 12px; border: none; border-radius: 4px; font-weight: bold; }
+        .btn-excluir { background: #e74c3c; color: white; }
+        .btn-editar { background: #3498db; color: white; }
+        #btnAdd { background-color: #2ecc71; color: white; border: none; padding: 8px 15px; border-radius: 5px; cursor: pointer; }
+    </style>
+</head>
+
+<body>
+    <div id="toast"></div>
+
+    <header>
+        <img src="mizuimg.png" alt="Logo">
+        <h1>Inspeção: Silo Metálico</h1>
+    </header>
+
+    <div class="container">
+        <a href="menu.html" class="botao-voltar">← Voltar</a>
+
+        <div class="panel">
+            <h2>Identificação</h2>
+            <div class="grid">
+                <div>
+                    <label>Operador</label>
+                    <input type="text" id="operador">
+                </div>
+                <div>
+                    <label>Turno</label>
+                    <select id="turno">
+                        <option>A</option>
+                        <option>B</option>
+                        <option>C</option>
+                        <option>D</option>
+                    </select>
+                </div>
+                <div>
+                    <label>Data</label>
+                    <input type="date" id="data">
+                </div>
+            </div>
+        </div>
+
+        <div class="panel" id="painelChecklist">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                <div id="tituloPainel" class="titulo-checklist">
+                    Itens de Inspeção - Silo Metálico
+                </div>
+                <button id="btnAdd" style="display:none;" onclick="criarNovoItem()">+ Adicionar Item</button>
+            </div>
+            <div id="listaItens"></div>
+            <button class="finalizar" onclick="finalizarChecklist()" style="margin-top: 20px;">FINALIZAR CHECKLIST</button>
+        </div>
+    </div>
+
+    <div id="modalEditar" class="modal">
+        <div class="modal-conteudo">
+            <h3>Editar/Criar Item</h3>
+            <label>Título:</label>
+            <input type="text" id="inputTitulo">
+            <label>Descrição:</label>
+            <textarea id="inputDescricao" rows="5"></textarea>
+            <div class="botoes">
+                <button id="btnCancelar">Cancelar</button>
+                <button id="btnSalvar">Salvar Alterações</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="modalExcluir" class="modal">
+        <div class="modal-conteudo">
+            <h3>Confirmar Exclusão</h3>
+            <p>Deseja realmente excluir este item? Esta ação não poderá ser desfeita.</p>
+            <div class="botoes">
+                <button id="btnExcluirConfirm">Sim, Excluir</button>
+                <button id="btnExcluirCancelar">Não, Manter</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let itensData = []; 
+        let itemAtual = null;
+        let itemExcluir = null;
+
+        (function () { emailjs.init("UehVdmGwtpmcV70Sd"); })();
+
+        async function carregarItensDoBanco() {
+            try {
+                const { data, error } = await _supabase
+                    .from('itens_checklist')
+                    .select('*')
+                    .eq('area', 'Silo Metálico')
+                    .order('ordem', { ascending: true });
+                if (error) throw error;
+                itensData = data || [];
+                renderItens();
+            } catch (err) {
+                console.error("Erro ao carregar itens:", err);
+                mostrarToast("Erro ao carregar itens do banco", "erro");
+            }
+        }
+
+        function renderItens() {
+            const lista = document.getElementById("listaItens");
+            lista.innerHTML = "";
+            itensData.forEach((item, i) => {
+                const div = document.createElement("div");
+                div.className = "item";
+                div.setAttribute('data-id', item.id); 
+                div.innerHTML = `
+                    <div class="numero">ITEM ${String(i + 1).padStart(2, "0")}</div>
+                    <div class="titulo">${item.titulo}</div>
+                    <div class="descricao">${item.descricao}</div>
+                    <div class="opcoes">
+                        <label><input type="radio" name="item${item.id}" value="Normal"> Normal</label>
+                        <label><input type="radio" name="item${item.id}" value="Anormal"> Anormal</label>
+                    </div>
+                    <textarea class="obs" placeholder="Observações"></textarea>
+                    <input type="file" class="foto" accept="image/*">
+                `;
+                lista.appendChild(div);
+            });
+            if (localStorage.getItem("usuarioLogado") === "admin") adicionarControlesADM();
+        }
+
+        // FUNÇÕES DO ADM VOLTARAM PRA CÁ
+        function adicionarControlesADM() {
+            document.getElementById("btnAdd").style.display = "block";
+            document.querySelectorAll(".item").forEach(item => {
+                if (item.querySelector(".btn-editar")) return;
+                let btnEd = document.createElement("button");
+                btnEd.innerText = "Editar"; btnEd.className = "btn-editar";
+                btnEd.onclick = () => { itemAtual = item; abrirModalEditar(item); };
+                let btnEx = document.createElement("button");
+                btnEx.innerText = "Excluir"; btnEx.className = "btn-excluir";
+                btnEx.onclick = () => { itemExcluir = item; document.getElementById("modalExcluir").style.display = "flex"; };
+                item.appendChild(btnEd); item.appendChild(btnEx);
+            });
+        }
+
+        function abrirModalEditar(item) {
+            document.getElementById("inputTitulo").value = item.querySelector(".titulo").innerText;
+            document.getElementById("inputDescricao").value = item.querySelector(".descricao").innerHTML.replace("<b>Situação Esperada:</b><br>", "");
+            document.getElementById("modalEditar").style.display = "flex";
+        }
+
+        function criarNovoItem() { 
+            itemAtual = null; 
+            document.getElementById("inputTitulo").value = ""; 
+            document.getElementById("inputDescricao").value = ""; 
+            document.getElementById("modalEditar").style.display = "flex"; 
+        }
+
+        document.getElementById("btnSalvar").onclick = async () => {
+            const titulo = document.getElementById("inputTitulo").value;
+            const descricao = "<b>Situação Esperada:</b><br>" + document.getElementById("inputDescricao").value;
+            try {
+                if (itemAtual && itemAtual.getAttribute('data-id')) {
+                    const id = itemAtual.getAttribute('data-id');
+                    await _supabase.from('itens_checklist').update({ titulo, descricao }).eq('id', id);
+                } else {
+                    await _supabase.from('itens_checklist').insert([{ area: 'Silo Metálico', titulo, descricao, ordem: itensData.length + 1 }]);
+                }
+                mostrarToast("Banco de Dados Atualizado!");
+                document.getElementById("modalEditar").style.display = "none";
+                carregarItensDoBanco(); 
+            } catch (err) { mostrarToast("Erro ao salvar", "erro"); }
+        };
+
+        document.getElementById("btnExcluirConfirm").onclick = async () => {
+            if (itemExcluir) {
+                const id = itemExcluir.getAttribute('data-id');
+                try {
+                    await _supabase.from('itens_checklist').delete().eq('id', id);
+                    mostrarToast("Item removido!");
+                    document.getElementById("modalExcluir").style.display = "none";
+                    carregarItensDoBanco();
+                } catch (err) { mostrarToast("Erro ao excluir", "erro"); }
+            }
+        };
+
+        async function finalizarChecklist() {
+            let operador = document.getElementById("operador").value;
+            let turno = document.getElementById("turno").value;
+            let data = document.getElementById("data").value;
+            let itensHTML = document.querySelectorAll(".item");
+            let erro = false;
+
+            if (!operador || !data) { mostrarToast("Preencha a Identificação", "erro"); return; }
+
+            let resultadosArray = [];
+            let textoEmail = "";
+
+            for (let item of itensHTML) {
+                let radio = item.querySelector("input:checked");
+                if (!radio) { item.style.border = "2px solid red"; erro = true; } 
+                else {
+                    item.style.border = "none";
+                    let fotoInput = item.querySelector(".foto");
+                    let imagemBase64 = fotoInput.files[0] ? await toBase64(fotoInput.files[0]) : "";
+                    resultadosArray.push({
+                        titulo: item.querySelector(".titulo").innerText,
+                        status: radio.value,
+                        obs: item.querySelector(".obs").value,
+                        foto: imagemBase64 
+                    });
+                    textoEmail += `${item.querySelector(".titulo").innerText}: ${radio.value} | `;
+                }
+            }
+
+            if (erro) { mostrarToast("Responda todos os itens", "erro"); return; }
+
+            const { error } = await _supabase.from('inspecoes').insert([
+                { area: "Silo Metálico", operador, turno, data_checklist: data, resultados: resultadosArray }
+            ]);
+
+            if (!error) {
+                localStorage.setItem("status_Silo Metálico", new Date().toLocaleDateString('pt-BR'));
+                emailjs.send("service_u1dl3tq", "template_zekwc0r", { operador, area: "Silo Metálico", data, resultados: textoEmail });
+                mostrarToast("Finalizado com Sucesso!");
+                setTimeout(() => window.location.href = "menu.html", 2000);
+            }
+        }
+
+        const toBase64 = file => new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.readAsDataURL(file);
+            reader.onload = () => resolve(reader.result);
+            reader.onerror = error => reject(error);
+        });
+
+        function mostrarToast(msg, tipo = "ok") {
+            let t = document.getElementById("toast");
+            t.innerText = msg;
+            t.style.background = tipo === "erro" ? "#e74c3c" : "#2ecc71";
+            t.style.display = "block";
+            setTimeout(() => t.style.display = "none", 2500);
+        }
+
+        document.getElementById("btnCancelar").onclick = () => document.getElementById("modalEditar").style.display = "none";
+        document.getElementById("btnExcluirCancelar").onclick = () => document.getElementById("modalExcluir").style.display = "none";
+
+        window.onload = carregarItensDoBanco;
+    </script>
+</body>
+</html>

@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Menu Checklist</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="manifest" href="manifest.json">
+  <style>
+    .titulo-secao-destaque {
+      background: #2c3e50; color: #ffffff; padding: 12px 15px; border-radius: 6px;
+      font-size: 1.1rem; text-align: center; margin-top: 35px; margin-bottom: 15px;
+      font-weight: 600; text-transform: uppercase; letter-spacing: 1px;
+    }
+    .primeiro-titulo { margin-top: 10px; }
+    .menu-separador { background-color: #ff7e00 !important; color: white !important; border-radius: 4px !important; padding: 10px !important; font-size: 0.85rem !important; font-weight: bold; }
+
+    .menu-botao { 
+        position: relative; 
+        transition: 0.3s; 
+        display: flex; 
+        flex-direction: column; 
+        align-items: center; 
+        justify-content: center;
+        min-height: 65px;
+        text-decoration: none;
+        color: inherit;
+    }
+
+    /* CLASSE VERDE PARA CHECKLIST CONCLUÍDO */
+    .checklist-feito {
+        background-color: #2ecc71 !important;
+        color: white !important;
+        border-color: #27ae60 !important;
+    }
+
+    .checklist-feito::after {
+        content: " ✅ Já feito";
+        font-size: 0.7rem;
+        display: block;
+        font-weight: bold;
+        margin-top: 4px;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <img src="mizuimg.png">
+    <h1>Checklist de Inspeção</h1>
+  </header>
+
+  <div class="container">
+    <div class="titulo-secao-destaque primeiro-titulo"> Moagem de Cimento </div>
+    <div class="menu-grid">
+      <a href="alimentacao.html" class="menu-botao" id="btn-Alimentação da Moagem">Alimentação da Moagem</a>
+      <a href="silo_metalico.html" class="menu-botao" id="btn-Silo Metálico">Silo Metálico</a>
+      <a href="silo_multicamara.html" class="menu-botao" id="btn-Silo Multicâmara">Silo Multicâmara</a>
+      <a href="moagem.html" class="menu-botao" id="btn-Moagem Z1M01">Moagem Z1M01</a>
+    </div>
+
+    <div class="titulo-secao-destaque"> Moagem de Cru </div>
+    <div class="menu-grid">
+      <a href="alimentacao_cru.html" class="menu-botao" id="btn-Alimentação de Cru">Alimentação dos Silos</a>
+      <a href="moagem_cru.html" class="menu-botao" id="btn-Moagem de Cru">Moagem</a>
+      <a href="caixa_agua.html" class="menu-botao" id="btn-Caixa de Água Industrial">Caixa de Água Industrial</a>
+    </div>
+
+    <div class="titulo-secao-destaque"> Resfriador e Transporte de Clínquer </div>
+    <div class="menu-grid">
+      <a href="resfriador.html" class="menu-botao" id="btn-Inspeção do Resfriador">Inspeção do Resfriador</a>
+      <a href="transporte.html" class="menu-botao" id="btn-Transporte de Clínquer">Transporte de Clínquer</a>
+    </div>
+
+    <div class="menu-grid" style="margin-top: 40px;">
+      <div class="menu-separador"> REGISTROS E HISTÓRICO </div>
+      <a href="selecionar_historico.html" class="menu-botao historico"> Histórico de Checklists </a>
+    </div>
+
+    <a href="login.html" class="botao-voltar" style="margin-top: 30px;"> ← Sair do Sistema </a>
+  </div>
+
+  <script>
+    let usuario = localStorage.getItem("usuarioLogado");
+    if (!usuario) { window.location.href = "login.html"; }
+
+    function verificarStatus() {
+        const dataHoje = new Date().toLocaleDateString('pt-BR');
+        // Lista atualizada para bater com os nomes salvos nas páginas
+        const areas = [
+            "Alimentação da Moagem", "Silo Metálico", "Silo Multicâmara", "Moagem Z1M01",
+            "Alimentação de Cru", "Moagem de Cru", "Caixa de Água Industrial", 
+            "Inspeção do Resfriador", "Transporte de Clínquer"
+        ];
+
+        areas.forEach(area => {
+            const statusSalvo = localStorage.getItem("status_" + area);
+            const botao = document.getElementById("btn-" + area);
+            
+            if (botao && statusSalvo === dataHoje) {
+                botao.classList.add("checklist-feito");
+            }
+        });
+    }
+    window.onload = verificarStatus;
+  </script>
+</body>
+</html>
