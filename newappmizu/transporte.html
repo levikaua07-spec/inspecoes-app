@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Transporte de Clínquer - Mizu</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="manifest" href="manifest.json">
+    
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="supabase-config.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
+
+    <style>
+        #toast { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); padding: 15px 25px; color: white; border-radius: 8px; display: none; z-index: 9999; font-weight: bold; font-family: sans-serif; }
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.7); justify-content: center; align-items: center; z-index: 9999; }
+        .modal-conteudo { background: white; padding: 30px; border-radius: 12px; width: 90%; max-width: 450px; box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2); }
+        .modal-conteudo input, .modal-conteudo textarea { width: 100%; margin: 10px 0; padding: 10px; border: 1px solid #ddd; border-radius: 4px; box-sizing: border-box; }
+        .botoes { display: flex; justify-content: flex-end; gap: 12px; margin-top: 20px; }
+        #btnSalvar { background: #2ecc71; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-weight: bold; }
+        #btnExcluirConfirm { background: #e74c3c; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-weight: bold; }
+        #btnCancelar, #btnExcluirCancelar { background: #95a5a6; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; }
+        .btn-editar, .btn-excluir { margin-top: 10px; margin-right: 5px; cursor: pointer; padding: 6px 12px; border: none; border-radius: 4px; font-weight: bold; }
+        .btn-excluir { background: #e74c3c; color: white; }
+        .btn-editar { background: #3498db; color: white; }
+        #btnAddItem { background-color: #2ecc71; color: white; border: none; padding: 8px 15px; border-radius: 5px; cursor: pointer; display: none; font-weight: bold; }
+        .sessao-titulo { background: #f8f9fa; padding: 12px; margin-top: 10px; border-radius: 8px; display: flex; justify-content: space-between; align-items: center; }
+    </style>
+</head>
+<body>
+    <div id="toast"></div>
+    <header>
+        <img src="mizuimg.png" alt="Logo">
+        <h1>Transporte de Clínquer</h1>
+    </header>
+
+    <div class="container">
+        <a href="menu.html" class="botao-voltar">← Voltar</a>
+
+        <div class="panel">
+            <h2>Identificação</h2>
+            <div class="grid">
+                <div><label>Operador</label><input type="text" id="operador"></div>
+                <div>
+                    <label>Turno</label>
+                    <select id="turno">
+                        <option>A</option><option>B</option><option>C</option><option>D</option>
+                    </select>
+                </div>
+                <div><label>Data</label><input type="date" id="data"></div>
+            </div>
+        </div>
+
+        <div class="panel">
+            <div class="sessao-titulo">
+                <h2 class="titulo-destaque" style="margin:0;">Itens de Inspeção</h2>
+                <button id="btnAddItem" onclick="abrirModalNovo()">+ Adicionar Item</button>
+            </div>
+            <div id="listaItens"></div>
+            <button id="btnFinalizar" class="finalizar" onclick="finalizarChecklist()" style="margin-top: 30px;">FINALIZAR CHECKLIST</button>
+        </div>
+    </div>
+
+    <div id="modalEditar" class="modal">
+        <div class="modal-conteudo">
+            <h3 id="modalTitulo">Editar Item</h3>
+            <label>Título:</label><input type="text" id="inputTitulo">
+            <label>Descrição:</label><textarea id="inputDescricao" rows="5"></textarea>
+            <div class="botoes">
+                <button onclick="fecharModais()" id="btnCancelar">Cancelar</button>
+                <button id="btnSalvar">Salvar no Banco</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="modalExcluir" class="modal">
+        <div class="modal-conteudo">
+            <h3>Confirmar Exclusão</h3>
+            <p>Deseja excluir este item permanentemente do banco?</p>
+            <div class="botoes">
+                <button id="btnExcluirConfirm">Sim, Excluir</button>
+                <button onclick="fecharModais()" id="btnExcluirCancelar">Não, Manter</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+    const AREA_ATUAL = "Transporte de Clínquer";
+    const dadosIniciais = [
+        { titulo: "01 - Transporte de caçambas 33118", descricao: "<b>Situação Esperada:</b><br>Com todas as roldanas, sem vazamento de material, sem material encostando no transportador, sem barulho estranho, sem caçambas empenadas, proteções laterais no lugar;" },
+        { titulo: "02 - Válvulas de desvio 34101 M1, M2, M3 e M4", descricao: "<b>Situação Esperada:</b><br>Posicionada conforme indicação do supervisório, sem agulhas faltantes, sem dificuldades para modular, sem vasamento de óleo;" },
+        { titulo: "03 - Filtro 34120M Topo do silo de clínquer", descricao: "<b>Situação Esperada:</b><br>Sem material acumulado na tremonha, sem ar falso, pressão de ar de limpeza entre 5 e 6 Bar, sem vazamentos de ar comprimido, todos os batimentos funcionando, eclusa girando livre. Filtro sem poluir." },
+        { titulo: "04 - Transportador metálico 34107", descricao: "<b>Situação Esperada:</b><br>Com todas as roldanas, sem vazamento de material, sem acumulo de material no retorno do transportador, sem barulho estranho sem caçambas empenadas, todas as proteções no lugar;" },
+        { titulo: "05 - Filtros / Topo do silo de expedição 34108M e 34119M", descricao: "<b>Situação Esperada:</b><br>Sem material acumulado na tremonha, sem ar falso, pressão de ar de limpeza entre 5 e 6 Bar, sem vazamentos de ar comprimido, todos os batimentos funcionando, eclusa girando livre. Filtro sem poluir." },
+        { titulo: "06 - Área dos topos dos silos clinquer e expedição", descricao: "<b>Situação Esperada:</b><br>Área limpa e organizada, sem plasticos, sem madeira, sem ferragem, sem vazamento de clínquer, alavancas, lanças e cordas de medição nos suportes, portas fechadas e vedadas." }
+    ];
+
+    let itensInspecao = [];
+    let idEditando = null;
+
+    (function () { emailjs.init("UehVdmGwtpmcV70Sd"); })();
+
+    // --- NOVA FUNÇÃO DE UPLOAD PARA O STORAGE ---
+    async function uploadFoto(arquivo) {
+        if (!arquivo) return "";
+        const extensao = arquivo.name.split('.').pop();
+        const nomeArquivo = `${Date.now()}_${Math.random().toString(36).substring(7)}.${extensao}`;
+
+        const { data, error } = await _supabase.storage
+            .from('fotos_checklists')
+            .upload(nomeArquivo, arquivo);
+
+        if (error) {
+            console.error("Erro no upload:", error);
+            return "";
+        }
+
+        const { data: publicUrl } = _supabase.storage
+            .from('fotos_checklists')
+            .getPublicUrl(nomeArquivo);
+
+        return publicUrl.publicUrl;
+    }
+
+    async function carregarItens() {
+        const { data, error } = await _supabase
+            .from('itens_checklist')
+            .select('*')
+            .eq('area', AREA_ATUAL)
+            .order('id', { ascending: true });
+
+        if (data && data.length > 0) {
+            itensInspecao = data;
+        } else {
+            const itensParaInserir = dadosIniciais.map(item => ({ ...item, area: AREA_ATUAL }));
+            const { data: novosItens } = await _supabase.from('itens_checklist').insert(itensParaInserir).select();
+            itensInspecao = novosItens || dadosIniciais;
+        }
+        renderizarItens();
+    }
+
+    function renderizarItens() {
+        const lista = document.getElementById("listaItens");
+        const isAdmin = localStorage.getItem("usuarioLogado") === "admin";
+        document.getElementById("btnAddItem").style.display = isAdmin ? "block" : "none";
+        lista.innerHTML = "";
+
+        itensInspecao.forEach((item, i) => {
+            const div = document.createElement("div");
+            div.className = "item";
+            div.innerHTML = `
+                <div class="numero">ITEM ${String(i + 1).padStart(2, "0")}</div>
+                <div class="titulo">${item.titulo}</div>
+                <div class="descricao">${item.descricao}</div>
+                <div class="opcoes">
+                    <label><input type="radio" name="item_${i}" value="Normal"> Normal</label>
+                    <label><input type="radio" name="item_${i}" value="Anormal"> Anormal</label>
+                </div>
+                <textarea class="obs" placeholder="Observações"></textarea>
+                <input type="file" class="foto" accept="image/*" capture="environment">
+                ${isAdmin ? `
+                    <button class="btn-editar" onclick="abrirModalEditar(${item.id}, '${item.titulo.replace(/'/g, "\\'")}', '${item.descricao.replace(/'/g, "\\'")}')">Editar</button>
+                    <button class="btn-excluir" onclick="abrirModalExcluir(${item.id})">Excluir</button>
+                ` : ''}
+            `;
+            lista.appendChild(div);
+        });
+    }
+
+    // FUNÇÕES ADM
+    function abrirModalNovo() {
+        idEditando = null;
+        document.getElementById("modalTitulo").innerText = "Novo Item";
+        document.getElementById("inputTitulo").value = "";
+        document.getElementById("inputDescricao").value = "";
+        document.getElementById("modalEditar").style.display = "flex";
+    }
+
+    function abrirModalEditar(id, titulo, descricao) {
+        idEditando = id;
+        document.getElementById("modalTitulo").innerText = "Editar Item";
+        document.getElementById("inputTitulo").value = titulo;
+        document.getElementById("inputDescricao").value = descricao;
+        document.getElementById("modalEditar").style.display = "flex";
+    }
+
+    document.getElementById("btnSalvar").onclick = async () => {
+        const titulo = document.getElementById("inputTitulo").value;
+        const descricao = document.getElementById("inputDescricao").value;
+        if (idEditando) {
+            await _supabase.from('itens_checklist').update({ titulo, descricao }).eq('id', idEditando);
+        } else {
+            await _supabase.from('itens_checklist').insert([{ area: AREA_ATUAL, titulo, descricao }]);
+        }
+        fecharModais();
+        carregarItens();
+    };
+
+    function abrirModalExcluir(id) {
+        document.getElementById("modalExcluir").style.display = "flex";
+        document.getElementById("btnExcluirConfirm").onclick = async () => {
+            await _supabase.from('itens_checklist').delete().eq('id', id);
+            fecharModais();
+            carregarItens();
+        };
+    }
+
+    function fecharModais() { 
+        document.getElementById("modalEditar").style.display = "none"; 
+        document.getElementById("modalExcluir").style.display = "none"; 
+    }
+
+    // FINALIZAR COM UPLOAD DE FOTOS REAL
+    async function finalizarChecklist() {
+        const btn = document.querySelector(".finalizar");
+        const operador = document.getElementById("operador").value;
+        const turno = document.getElementById("turno").value;
+        const data = document.getElementById("data").value;
+        const itensHTML = document.querySelectorAll(".item");
+
+        if (!operador || !data) { mostrarToast("Preencha Operador e Data", "erro"); return; }
+
+        let resultadosArray = [];
+        let resumoEmail = "";
+        btn.disabled = true; btn.innerText = "ENVIANDO FOTOS...";
+
+        for (let i = 0; i < itensHTML.length; i++) {
+            let radio = itensHTML[i].querySelector("input:checked");
+            if (!radio) {
+                itensHTML[i].scrollIntoView({ behavior: 'smooth' });
+                mostrarToast("Responda todos os itens", "erro");
+                btn.disabled = false; btn.innerText = "FINALIZAR CHECKLIST";
+                return; 
+            }
+            
+            // Lógica de Foto
+            let fotoInput = itensHTML[i].querySelector(".foto");
+            let urlFoto = "";
+            if (fotoInput.files[0]) {
+                urlFoto = await uploadFoto(fotoInput.files[0]);
+            }
+
+            resultadosArray.push({
+                titulo: itensInspecao[i].titulo,
+                status: radio.value,
+                obs: itensHTML[i].querySelector(".obs").value,
+                foto: urlFoto // Agora salva a URL pública do Storage
+            });
+            resumoEmail += `${itensInspecao[i].titulo}: ${radio.value} | `;
+        }
+
+        try {
+            const { error } = await _supabase.from('inspecoes').insert([{
+                area: AREA_ATUAL, operador, turno, data_checklist: data, resultados: resultadosArray
+            }]);
+            if (error) throw error;
+
+            // Histórico local e status (opcional manter local para visualização rápida)
+            let hist = JSON.parse(localStorage.getItem("historico_resfriador_transporte")) || [];
+            hist.push({ area: AREA_ATUAL, operador, turno, data, resultados: resultadosArray });
+            localStorage.setItem("historico_resfriador_transporte", JSON.stringify(hist));
+            localStorage.setItem(`status_${AREA_ATUAL}`, new Date().toLocaleDateString('pt-BR'));
+
+            await emailjs.send("service_u1dl3tq", "template_zekwc0r", {
+                operador, turno, area: AREA_ATUAL, data, resultados: resumoEmail
+            });
+
+            mostrarToast("Sucesso!");
+            setTimeout(() => window.location.href = "menu.html", 1500);
+        } catch (err) {
+            console.error(err);
+            mostrarToast("Erro ao salvar", "erro");
+            btn.disabled = false; btn.innerText = "FINALIZAR CHECKLIST";
+        }
+    }
+
+    function mostrarToast(msg, tipo) {
+        let t = document.getElementById("toast");
+        t.innerText = msg; t.style.background = tipo === "erro" ? "#e74c3c" : "#2ecc71";
+        t.style.display = "block"; setTimeout(() => t.style.display = "none", 2500);
+    }
+
+    window.onload = carregarItens;
+</script>
+</body>
+</html>

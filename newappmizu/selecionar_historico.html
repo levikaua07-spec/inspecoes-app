@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Selecionar Histórico - Mizu</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="manifest" href="manifest.json">
+    <style>
+        .menu-grid { display: grid; grid-template-columns: 1fr; gap: 15px; margin-top: 20px; }
+        .btn-hist { 
+            background: #34495e; color: white; padding: 20px; 
+            text-decoration: none; border-radius: 8px; text-align: center;
+            font-weight: bold; font-size: 1.1rem; transition: 0.3s;
+        }
+        .btn-hist:hover { background: #2c3e50; transform: scale(1.02); }
+    </style>
+</head>
+<body>
+    <header>
+        <img src="mizuimg.png">
+        <h1>Históricos de Inspeção</h1>
+    </header>
+
+    <div class="container">
+        <a href="menu.html" class="botao-voltar">← Voltar ao Menu</a>
+
+        <div class="menu-grid">
+            <a href="historico_moagem_cimento.html" class="btn-hist">Moagem de Cimento</a>
+            <a href="historico_moagem_cru.html" class="btn-hist">Moagem de Cru</a>
+            <a href="historico_resfriador_transporte.html" class="btn-hist">Resfriador e Transporte</a>
+        </div>
+    </div>
+</body>
+</html>

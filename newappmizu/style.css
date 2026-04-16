@@ -1,0 +1,269 @@
+/* ===== BASE ===== */
+body{
+margin:0;
+font-family:Arial;
+background:#e4e4e4;
+}
+
+/* ===== HEADER ===== */
+header{
+background:#2b2b2b;
+color:white;
+padding:15px;
+display:flex;
+align-items:center;
+gap:15px;
+box-shadow:0px 2px 8px rgba(0,0,0,0.4);
+border-bottom:4px solid #f37021;
+}
+
+header img{
+height:40px;
+}
+
+header h1{
+margin:0;
+font-size:20px;
+}
+
+/* ===== CONTAINER ===== */
+.container{
+max-width:900px;
+margin:auto;
+padding:20px;
+}
+
+/* ===== MENU ===== */
+.titulo-menu{
+text-align:center;
+margin-bottom:20px;
+color:#333;
+}
+
+.menu-grid{
+display:grid;
+grid-template-columns:1fr;
+gap:15px;
+}
+
+.menu-botao{
+display:block;
+text-align:center;
+padding:18px;
+background:white;
+border-radius:8px;
+text-decoration:none;
+color:black;
+font-weight:bold;
+font-size:16px;
+border-left:6px solid #f37021;
+transition:0.2s;
+}
+
+.menu-botao:hover{
+background:#f5f5f5;
+transform:scale(1.02);
+}
+
+.historico{
+border-left:6px solid #444;
+}
+
+/* ===== PAINEL ===== */
+.panel{
+background:white;
+padding:20px;
+margin-bottom:20px;
+border-radius:8px;
+box-shadow:0px 2px 6px rgba(0,0,0,0.1);
+}
+
+/* ===== GRID ===== */
+.grid{
+display:grid;
+grid-template-columns:1fr 1fr;
+gap:15px;
+}
+
+/* ===== FORM ===== */
+label{
+font-weight:bold;
+display:block;
+margin-bottom:5px;
+}
+
+input, select, textarea{
+width:100%;
+padding:8px;
+border-radius:5px;
+border:1px solid #ccc;
+}
+
+/* ===== ITENS CHECKLIST ===== */
+.item{
+background:#fafafa;
+padding:15px;
+margin-top:15px;
+border-radius:6px;
+border-left:5px solid #ccc; /* neutro */
+}
+
+/* 🔥 STATUS */
+.item.normal{
+border-left:6px solid #2ecc71;
+}
+
+.item.anormal{
+border-left:6px solid #e74c3c;
+}
+
+.numero{
+font-weight:bold;
+color:#666;
+}
+
+.titulo{
+font-weight:bold;
+font-size:18px;
+margin-top:5px;
+}
+
+.descricao{
+margin-top:10px;
+line-height:1.4;
+}
+
+/* ===== OPÇÕES ===== */
+.opcoes{
+margin-top:10px;
+display:flex;
+gap:20px;
+}
+
+.opcoes label{
+padding:8px 15px;
+border-radius:6px;
+background:#eee;
+cursor:pointer;
+font-weight:bold;
+border:2px solid transparent;
+}
+
+.opcoes input[value="Normal"]:checked{
+accent-color: green;
+}
+
+.opcoes input[value="Anormal"]:checked{
+accent-color: red;
+}
+
+/* ===== BOTÕES ===== */
+.finalizar{
+width:100%;
+padding:15px;
+background:#f37021;
+color:white;
+border:none;
+border-radius:6px;
+font-size:16px;
+font-weight:bold;
+cursor:pointer;
+margin-top:20px;
+}
+
+.finalizar:hover{
+background:#d85f15;
+}
+
+.botao-voltar{
+display:inline-block;
+margin-top:20px;
+text-decoration:none;
+color:white;
+background:#666;
+padding:10px 20px;
+border-radius:6px;
+}
+
+.botao-voltar:hover{
+background:#555;
+}
+
+button{
+border:none;
+border-radius:6px;
+background:white;
+padding:15px;
+margin-bottom:10px;
+cursor:pointer;
+text-align:left;
+border-left:6px solid #f37021;
+}
+
+button:hover{
+background:#f5f5f5;
+}
+
+/* ===== EXTRAS MENU ===== */
+.menu-aviso{
+text-align:center;
+margin-top:25px;
+margin-bottom:10px;
+padding:10px;
+background:#d6d6d6;
+border-radius:6px;
+font-weight:bold;
+color:#333;
+border-left:5px solid #666;
+}
+
+.menu-separador{
+margin-top:35px;
+padding:12px;
+text-align:center;
+font-weight:bold;
+background:#f37021;
+color:white;
+border-radius:6px;
+letter-spacing:1px;
+box-shadow:0px 2px 5px rgba(0,0,0,0.2);
+}
+
+.menu-subtexto{
+text-align:center;
+font-size:13px;
+color:#666;
+margin-top:5px;
+margin-bottom:10px;
+}
+.titulo-checklist{
+  background:#f37021;
+  color:white;
+  padding:12px 15px;
+  border-radius:6px;
+  font-weight:bold;
+  font-size:18px;
+  box-shadow:0px 2px 6px rgba(0,0,0,0.2);
+}
+.titulo-destaque{
+  background: #f37021;
+  color: white;
+  padding: 8px 15px;
+  border-radius: 6px;
+  font-size: 18px;
+}
+.titulo-destaque{
+  background: #f37021;
+  color: white;
+  padding: 8px 15px;
+  border-radius: 6px;
+  font-size: 18px;
+}
+.titulo-destaque{
+  background: linear-gradient(90deg, #f37021, #ff8c42);
+  color: white;
+  padding: 8px 15px;
+  border-radius: 6px;
+  font-size: 18px;
+  font-weight: bold;
+}

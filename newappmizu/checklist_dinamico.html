@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checklist Dinâmico - Mizu</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="manifest" href="manifest.json">
+    </head>
+<body>
+    <header>
+        <img src="mizuimg.png" alt="Logo">
+        <h1 id="tituloArea">Carregando...</h1>
+    </header>
+
+    <div class="container">
+        <a href="menu.html" class="botao-voltar">← Voltar</a>
+        
+        <div class="panel">
+            <h2>Identificação</h2>
+            <div class="grid">
+                <div><label>Operador</label><input type="text" id="operador"></div>
+                <div><label>Líder</label><input type="text" id="lider"></div>
+                <div><label>Data</label><input type="date" id="data"></div>
+            </div>
+        </div>
+
+        <div class="panel">
+            <div class="sessao-titulo">
+                <h2>Itens de Inspeção</h2>
+                <button id="btnAddItem" style="display:none;" onclick="criarNovoItem()">+ Adicionar Item</button>
+            </div>
+            <div id="listaItens"></div>
+            <button class="finalizar" onclick="finalizarChecklist()">FINALIZAR E SALVAR ESTRUTURA</button>
+        </div>
+    </div>
+
+    <script>
+        // 1. Pega o nome da área da URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const areaNome = urlParams.get('area');
+        document.getElementById("tituloArea").innerText = areaNome;
+
+        // 2. Carrega os itens específicos dessa área do LocalStorage
+        let chaveStorage = "itens_" + areaNome;
+        let itensSalvos = JSON.parse(localStorage.getItem(chaveStorage)) || [];
+
+        function renderizar() {
+            const lista = document.getElementById("listaItens");
+            lista.innerHTML = "";
+            
+            if(itensSalvos.length === 0) {
+                lista.innerHTML = "<p style='text-align:center;'>Nenhum item cadastrado. Use o botão + Adicionar Item (Modo Admin).</p>";
+            }
+
+            itensSalvos.forEach((item, i) => {
+                // Desenha o item na tela (Igual ao código do Resfriador)
+                // Inclui botões de Editar/Excluir se for Admin
+            });
+
+            if (localStorage.getItem("usuarioLogado") === "admin") {
+                document.getElementById("btnAddItem").style.display = "block";
+            }
+        }
+
+        // 3. Ao finalizar, salva a estrutura dos itens para que na próxima vez eles já apareçam
+        function finalizarChecklist() {
+            // Lógica para enviar EmailJS...
+            // E lógica para salvar os itens criados pelo Admin:
+            localStorage.setItem(chaveStorage, JSON.stringify(itensSalvos));
+            alert("Checklist enviado e estrutura salva!");
+        }
+
+        window.onload = renderizar;
+    </script>
+</body>
+</html>
