@@ -36,12 +36,12 @@
     </div>
 
     <script>
-        // 1. Pega o nome da área da URL
+        
         const urlParams = new URLSearchParams(window.location.search);
         const areaNome = urlParams.get('area');
         document.getElementById("tituloArea").innerText = areaNome;
 
-        // 2. Carrega os itens específicos dessa área do LocalStorage
+        
         let chaveStorage = "itens_" + areaNome;
         let itensSalvos = JSON.parse(localStorage.getItem(chaveStorage)) || [];
 
@@ -54,8 +54,7 @@
             }
 
             itensSalvos.forEach((item, i) => {
-                // Desenha o item na tela (Igual ao código do Resfriador)
-                // Inclui botões de Editar/Excluir se for Admin
+               
             });
 
             if (localStorage.getItem("usuarioLogado") === "admin") {
@@ -63,10 +62,10 @@
             }
         }
 
-        // 3. Ao finalizar, salva a estrutura dos itens para que na próxima vez eles já apareçam
+        
         function finalizarChecklist() {
-            // Lógica para enviar EmailJS...
-            // E lógica para salvar os itens criados pelo Admin:
+            
+            
             localStorage.setItem(chaveStorage, JSON.stringify(itensSalvos));
             alert("Checklist enviado e estrutura salva!");
         }

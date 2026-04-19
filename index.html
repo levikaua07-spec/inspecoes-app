@@ -5,10 +5,12 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Login - Checklist</title>
- 
+  
  <link rel="manifest" href="manifest.json?v=1">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <link rel="apple-touch-icon" href="icon-192.png">
+
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
 
   <style>
     body {
@@ -78,6 +80,23 @@
       color: #333;
     }
 
+    /* Container para posicionar o olhinho */
+    .password-container {
+      position: relative;
+      width: 100%;
+    }
+
+    /* O Olhinho propriamente dito */
+    .toggle-password {
+      position: absolute;
+      right: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      cursor: pointer;
+      color: #666;
+      user-select: none;
+    }
+
     /* Estilo da setinha do select */
     .login-box select {
       cursor: pointer;
@@ -134,7 +153,12 @@
       <option value="operador">Operador</option>
     </select>
 
-    <input type="password" id="senha" placeholder="Senha">
+    <div class="password-container">
+      <input type="password" id="senha" placeholder="Senha">
+      <span class="material-symbols-outlined toggle-password" onclick="togglePassword()">
+        visibility
+      </span>
+    </div>
 
     <button onclick="logar()">Entrar</button>
 
@@ -147,11 +171,24 @@
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
   <script>
+    // Função para mostrar/esconder a senha
+    function togglePassword() {
+      const inputSenha = document.getElementById("senha");
+      const icon = document.querySelector(".toggle-password");
+      
+      if (inputSenha.type === "password") {
+        inputSenha.type = "text";
+        icon.textContent = "visibility_off";
+      } else {
+        inputSenha.type = "password";
+        icon.textContent = "visibility";
+      }
+    }
+
     function logar() {
       let user = document.getElementById("usuario").value;
       let senha = document.getElementById("senha").value;
 
-      // Definição das credenciais fixas
       const credenciais = {
         "admin": "mizuadmin",
         "operador": "mizuoperador"
@@ -167,7 +204,6 @@
         return;
       }
 
-      // Validação
       if (credenciais[user] === senha) {
         localStorage.setItem("usuarioLogado", user);
 

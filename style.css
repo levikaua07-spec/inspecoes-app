@@ -1,11 +1,11 @@
-/* ===== BASE ===== */
+
 body{
 margin:0;
 font-family:Arial;
 background:#e4e4e4;
 }
 
-/* ===== HEADER ===== */
+
 header{
 background:#2b2b2b;
 color:white;
@@ -26,14 +26,14 @@ margin:0;
 font-size:20px;
 }
 
-/* ===== CONTAINER ===== */
+
 .container{
 max-width:900px;
 margin:auto;
 padding:20px;
 }
 
-/* ===== MENU ===== */
+
 .titulo-menu{
 text-align:center;
 margin-bottom:20px;
@@ -69,7 +69,7 @@ transform:scale(1.02);
 border-left:6px solid #444;
 }
 
-/* ===== PAINEL ===== */
+
 .panel{
 background:white;
 padding:20px;
@@ -78,14 +78,14 @@ border-radius:8px;
 box-shadow:0px 2px 6px rgba(0,0,0,0.1);
 }
 
-/* ===== GRID ===== */
+
 .grid{
 display:grid;
 grid-template-columns:1fr 1fr;
 gap:15px;
 }
 
-/* ===== FORM ===== */
+
 label{
 font-weight:bold;
 display:block;
@@ -99,16 +99,16 @@ border-radius:5px;
 border:1px solid #ccc;
 }
 
-/* ===== ITENS CHECKLIST ===== */
+
 .item{
 background:#fafafa;
 padding:15px;
 margin-top:15px;
 border-radius:6px;
-border-left:5px solid #ccc; /* neutro */
+border-left:5px solid #ccc; 
 }
 
-/* 🔥 STATUS */
+
 .item.normal{
 border-left:6px solid #2ecc71;
 }
@@ -133,7 +133,7 @@ margin-top:10px;
 line-height:1.4;
 }
 
-/* ===== OPÇÕES ===== */
+
 .opcoes{
 margin-top:10px;
 display:flex;
@@ -157,7 +157,7 @@ accent-color: green;
 accent-color: red;
 }
 
-/* ===== BOTÕES ===== */
+
 .finalizar{
 width:100%;
 padding:15px;
@@ -204,7 +204,7 @@ button:hover{
 background:#f5f5f5;
 }
 
-/* ===== EXTRAS MENU ===== */
+
 .menu-aviso{
 text-align:center;
 margin-top:25px;

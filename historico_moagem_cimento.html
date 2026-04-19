@@ -51,7 +51,7 @@
     <script>
         let idParaApagar = null;
 
-      // ... (mantenha o restante do código igual, mude apenas a parte do .in dentro do carregarHistorico)
+      
 
         async function carregarHistorico() {
             const lista = document.getElementById("listaHistorico");
@@ -61,7 +61,7 @@
                 const { data, error } = await _supabase
                     .from('inspecoes')
                     .select('*')
-                    // AQUI ESTAVA O ERRO: Ajustei para aceitar 'Alimentação' e as novas áreas
+                    
                     .in('area', [
                         'Silo Metálico', 
                         'Alimentação', 

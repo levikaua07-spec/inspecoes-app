@@ -1,7 +1,7 @@
 {
   "name": "Mizu Inspeções",
-  "short_name": "Mizu",
-  "start_url": "index.html",
+  "short_name": "Mizu Checklist",
+  "start_url": "./index.html",
   "display": "standalone",
   "background_color": "#000000",
   "theme_color": "#2ecc71",

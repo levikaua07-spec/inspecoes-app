@@ -100,7 +100,7 @@
 
     (function () { emailjs.init("UehVdmGwtpmcV70Sd"); })();
 
-    // --- NOVA FUNÇÃO DE UPLOAD PARA O STORAGE ---
+    
     async function uploadFoto(arquivo) {
         if (!arquivo) return "";
         const extensao = arquivo.name.split('.').pop();
@@ -167,7 +167,7 @@
         });
     }
 
-    // FUNÇÕES ADM
+    
     function abrirModalNovo() {
         idEditando = null;
         document.getElementById("modalTitulo").innerText = "Novo Item";
@@ -210,7 +210,7 @@
         document.getElementById("modalExcluir").style.display = "none"; 
     }
 
-    // FINALIZAR COM UPLOAD DE FOTOS REAL
+    
     async function finalizarChecklist() {
         const btn = document.querySelector(".finalizar");
         const operador = document.getElementById("operador").value;
@@ -232,8 +232,8 @@
                 btn.disabled = false; btn.innerText = "FINALIZAR CHECKLIST";
                 return; 
             }
+        
             
-            // Lógica de Foto
             let fotoInput = itensHTML[i].querySelector(".foto");
             let urlFoto = "";
             if (fotoInput.files[0]) {
@@ -244,7 +244,7 @@
                 titulo: itensInspecao[i].titulo,
                 status: radio.value,
                 obs: itensHTML[i].querySelector(".obs").value,
-                foto: urlFoto // Agora salva a URL pública do Storage
+                foto: urlFoto 
             });
             resumoEmail += `${itensInspecao[i].titulo}: ${radio.value} | `;
         }
@@ -255,7 +255,7 @@
             }]);
             if (error) throw error;
 
-            // Histórico local e status (opcional manter local para visualização rápida)
+            
             let hist = JSON.parse(localStorage.getItem("historico_resfriador_transporte")) || [];
             hist.push({ area: AREA_ATUAL, operador, turno, data, resultados: resultadosArray });
             localStorage.setItem("historico_resfriador_transporte", JSON.stringify(hist));
