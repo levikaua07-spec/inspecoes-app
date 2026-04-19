@@ -38,7 +38,7 @@
     <div class="container">
         <a href="selecionar_historico.html" class="botao-voltar">← Voltar</a>
         <div id="listaHistorico"></div>
-        <button class="btn-limpar" onclick="abrirModalGeral()">Apagar Tudo (Setor Cru)</button>
+        <button class="btn-limpar" onclick="abrirModalGeral()">Apagar Tudo</button>
     </div>
 
     <div id="meuModal" class="modal-aviso">
@@ -61,7 +61,7 @@
             lista.innerHTML = "<p style='text-align:center;'>Carregando registros...</p>";
 
             try {
-                // Busca dados da Moagem E da Alimentação
+                
                 const { data: dados, error } = await _supabase
                     .from('inspecoes')
                     .select('*')
@@ -131,7 +131,7 @@
         document.getElementById("btnConfirmarAcao").onclick = async function() {
             try {
                 if (acaoGeral) {
-                    // Apaga Moagem e Alimentação de uma vez
+                    
                     await _supabase.from('inspecoes').delete().in('area', ['Moagem de Cru', 'Alimentação de Cru']);
                 } else {
                     await _supabase.from('inspecoes').delete().eq('id', idParaApagar);

@@ -24,6 +24,8 @@
         .btn-cancelar { background: #ecf0f1; color: #7f8c8d; border: none; flex: 1; padding: 12px; border-radius: 8px; font-weight: bold; cursor: pointer; }
         .img-historico { display: block; margin-top: 10px; max-width: 100%; border-radius: 6px; border: 1px solid #ddd; }
         .item-separador { margin-bottom: 12px; padding-bottom: 8px; border-bottom: 1px dashed #eee; }
+        
+        .btn-limpar { background: #7f8c8d; color: white; border: none; padding: 12px; border-radius: 5px; cursor: pointer; width: 100%; margin-top: 20px; }
     </style>
 </head>
 <body>
@@ -35,12 +37,13 @@
     <div class="container">
         <a href="menu.html" class="botao-voltar">← Voltar</a>
         <div id="listaHistorico"></div>
+        <button class="btn-limpar" onclick="abrirModalGeral()">Apagar Tudo</button>
     </div>
 
     <div id="meuModal" class="modal-aviso">
         <div class="modal-box">
-            <h3>Apagar Registro?</h3>
-            <p>Esta ação apagará o registro permanentemente do banco de dados.</p>
+            <h3 id="modalTitulo">Apagar Registro?</h3>
+            <p id="modalMensagem">Esta ação apagará o registro permanentemente do banco de dados.</p>
             <div class="modal-botoes">
                 <button class="btn-cancelar" onclick="fecharModal()">Cancelar</button>
                 <button class="btn-confirmar" id="btnConfirmarAcao">Sim, Apagar</button>
@@ -50,8 +53,16 @@
 
     <script>
         let idParaApagar = null;
+        let acaoGeral = false; 
 
-      
+        const areasCimento = [
+            'Silo Metálico', 
+            'Alimentação', 
+            'Alimentação da Moagem', 
+            'Silo Multicâmara', 
+            'Moagem Z1M01',
+            'Expedição'
+        ];
 
         async function carregarHistorico() {
             const lista = document.getElementById("listaHistorico");
@@ -61,19 +72,11 @@
                 const { data, error } = await _supabase
                     .from('inspecoes')
                     .select('*')
-                    
-                    .in('area', [
-                        'Silo Metálico', 
-                        'Alimentação', 
-                        'Alimentação da Moagem', 
-                        'Silo Multicâmara', 
-                        'Moagem Z1M01',
-                        'Expedição'
-                    ])
+                    .in('area', areasCimento)
                     .order('created_at', { ascending: false });
 
                 if (error) throw error;
-// ... (restante do script continua igual)
+
                 lista.innerHTML = "";
 
                 if (!data || data.length === 0) {
@@ -120,6 +123,14 @@
 
         function abrirModalIndividual(id) { 
             idParaApagar = id; 
+            acaoGeral = false;
+            document.getElementById("modalTitulo").innerText = "Apagar Registro?";
+            document.getElementById("meuModal").style.display = "flex"; 
+        }
+
+        function abrirModalGeral() { 
+            acaoGeral = true; 
+            document.getElementById("modalTitulo").innerText = "Apagar TUDO?";
             document.getElementById("meuModal").style.display = "flex"; 
         }
 
@@ -129,21 +140,19 @@
         }
 
         document.getElementById("btnConfirmarAcao").onclick = async function() {
-            if (idParaApagar) {
-                try {
-                    const { error } = await _supabase
-                        .from('inspecoes')
-                        .delete()
-                        .eq('id', idParaApagar);
-
-                    if (error) throw error;
+            try {
+                if (acaoGeral) {
                     
-                    fecharModal();
-                    carregarHistorico();
-                } catch (err) {
-                    console.error("Erro ao apagar:", err);
-                    alert("Erro ao apagar do banco.");
+                    await _supabase.from('inspecoes').delete().in('area', areasCimento);
+                } else if (idParaApagar) {
+                    await _supabase.from('inspecoes').delete().eq('id', idParaApagar);
                 }
+                
+                fecharModal();
+                carregarHistorico();
+            } catch (err) {
+                console.error("Erro ao apagar:", err);
+                alert("Erro ao excluir do banco.");
             }
         };
 

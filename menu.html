@@ -27,7 +27,6 @@
         color: inherit;
     }
 
-    /* CLASSE VERDE PARA CHECKLIST CONCLUÍDO */
     .checklist-feito {
         background-color: #2ecc71 !important;
         color: white !important;
@@ -76,16 +75,16 @@
       <a href="selecionar_historico.html" class="menu-botao historico"> Histórico de Checklists </a>
     </div>
 
-    <a href="login.html" class="botao-voltar" style="margin-top: 30px;"> ← Sair do Sistema </a>
+    <a href="index.html" class="botao-voltar" style="margin-top: 30px; display: block; text-align: center; text-decoration: none; color: inherit; font-weight: bold;"> ← Sair do Sistema </a>
   </div>
 
   <script>
     let usuario = localStorage.getItem("usuarioLogado");
-    if (!usuario) { window.location.href = "login.html"; }
+    
+    if (!usuario) { window.location.href = "index.html"; }
 
     function verificarStatus() {
         const dataHoje = new Date().toLocaleDateString('pt-BR');
-        // Lista atualizada para bater com os nomes salvos nas páginas
         const areas = [
             "Alimentação da Moagem", "Silo Metálico", "Silo Multicâmara", "Moagem Z1M01",
             "Alimentação de Cru", "Moagem de Cru", "Caixa de Água Industrial", 

@@ -19,7 +19,7 @@
             cursor: pointer; font-weight: bold; font-size: 16px;
         }
 
-        /* ESTILO DO MODAL BONITÃO */
+        
         .modal-aviso {
             display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0,0,0,0.6); z-index: 10000; align-items: center; justify-content: center;
@@ -48,7 +48,7 @@
     <div class="container">
         <a href="selecionar_historico.html" class="botao-voltar">← Voltar</a>
         <div id="listaHistorico"></div>
-        <button class="btn-limpar" onclick="abrirModalGeral()">Apagar Tudo (Limpeza Geral)</button>
+        <button class="btn-limpar" onclick="abrirModalGeral()">Apagar Tudo</button>
     </div>
 
     <div id="meuModal" class="modal-aviso">
@@ -107,7 +107,7 @@
             });
         }
 
-        // FUNÇÕES DO MODAL
+        
         function abrirModalIndividual(index) {
             indiceParaApagar = index;
             acaoGeral = false;

@@ -4,130 +4,170 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Login - Checklist</title>
+  <title>Login - Mizu Checklist</title>
   
- <link rel="manifest" href="manifest.json?v=1">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<link rel="apple-touch-icon" href="icon-192.png">
+  <link rel="manifest" href="manifest.json?v=1">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <link rel="apple-touch-icon" href="icon-192.png">
 
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
 
   <style>
     body {
       margin: 0;
-      font-family: Arial, sans-serif;
-      background: #e6e6e6;
+      font-family: 'Segoe UI', Arial, sans-serif;
+      background: linear-gradient(135deg, #2b2b2b 0%, #4a4a4a 100%);
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
     }
 
     header {
-      background: #2b2b2b;
+      background: rgba(43, 43, 43, 0.9);
       color: white;
-      padding: 15px;
+      padding: 15px 25px;
       display: flex;
       align-items: center;
       border-bottom: 4px solid #ff6600;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+      z-index: 10;
     }
 
     header img {
       height: 40px;
-      margin-right: 10px;
+      margin-right: 15px;
+      filter: drop-shadow(0 0 5px rgba(255,102,0,0.5));
+    }
+
+    header h1 {
+      font-size: 1.2rem;
+      margin: 0;
+      text-transform: uppercase;
+      letter-spacing: 1px;
     }
 
     .login-box {
       width: 350px;
-      margin: 80px auto;
-      background: white;
-      padding: 30px;
-      border-radius: 12px;
+      margin: auto;
+      background: rgba(255, 255, 255, 0.95);
+      padding: 40px 30px;
+      border-radius: 20px;
       text-align: center;
-      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+      box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4);
+      backdrop-filter: blur(10px);
+      animation: slideUp 0.8s ease-out;
     }
 
+    @keyframes slideUp {
+      from { opacity: 0; transform: translateY(30px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    
     .user-icon {
-      width: 80px;
-      height: 80px;
-      background: #f0f0f0;
+      width: 90px;
+      height: 90px;
+      background: #e0e0e0; 
       border-radius: 50%;
-      margin: 0 auto 20px;
+      margin: -80px auto 20px; 
       display: flex;
       align-items: center;
       justify-content: center;
       overflow: hidden;
-      border: 3px solid #ff6600;
+      border: 4px solid #ff6600;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.2);
     }
 
-    .user-icon img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
+    .user-icon span {
+      font-size: 60px;
+      color: #fff;
+      user-select: none;
     }
 
     .login-box h2 {
-      margin-bottom: 20px;
-      color: #333;
+      margin: 10px 0 25px;
+      color: #2b2b2b;
+      font-weight: 800;
+      font-size: 1.5rem;
     }
 
-    /* Estilo para o Select e Input */
     .login-box select, .login-box input {
       width: 100%;
-      padding: 12px;
-      margin: 10px 0;
-      border-radius: 6px;
-      border: 1px solid #ccc;
+      padding: 14px;
+      margin: 12px 0;
+      border-radius: 8px;
+      border: 2px solid #eee;
       box-sizing: border-box;
-      font-size: 14px;
-      background-color: white;
-      color: #333;
+      font-size: 15px;
+      transition: all 0.3s ease;
+      background: #f9f9f9;
     }
 
-    /* Container para posicionar o olhinho */
+    .login-box select:focus, .login-box input:focus {
+      border-color: #ff6600;
+      outline: none;
+      background: #fff;
+      box-shadow: 0 0 8px rgba(255,102,0,0.2);
+    }
+
     .password-container {
       position: relative;
       width: 100%;
     }
 
-    /* O Olhinho propriamente dito */
     .toggle-password {
       position: absolute;
-      right: 12px;
+      right: 15px;
       top: 50%;
       transform: translateY(-50%);
       cursor: pointer;
-      color: #666;
+      color: #ff6600;
       user-select: none;
+      font-size: 20px;
     }
 
-    /* Estilo da setinha do select */
     .login-box select {
       cursor: pointer;
       appearance: none;
-      background-image: url('data:image/svg+xml;charset=US-ASCII,<svg%20xmlns="http://www.w3.org/2000/svg"%20width="12"%20height="12"%20viewBox="0%200%2012%2012"><path%20fill="%23666"%20d="M10.293%203.293L6%207.586%201.707%203.293A1%201%200%2000.293%204.707l5%205a1%201%200%20001.414%200l5-5a1%201%200%2010-1.414-1.414z"/></svg>');
+      background-image: url('data:image/svg+xml;charset=US-ASCII,<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 12 12"><path fill="%23ff6600" d="M10.293 3.293L6 7.586 1.707 3.293A1 1 0 00.293 4.707l5 5a1 1 0 001.414 0l5-5a1 1 0 10-1.414-1.414z"/></svg>');
       background-repeat: no-repeat;
-      background-position: right 12px center;
-      background-size: 12px;
+      background-position: right 15px center;
     }
 
     .login-box button {
       width: 100%;
-      padding: 12px;
-      background: #ff6600;
+      padding: 15px;
+      background: linear-gradient(to right, #ff6600, #ff8533);
       color: white;
       border: none;
-      border-radius: 6px;
+      border-radius: 8px;
       font-size: 16px;
       cursor: pointer;
-      margin-top: 10px;
+      margin-top: 20px;
       font-weight: bold;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      transition: transform 0.2s, box-shadow 0.2s;
     }
 
     .login-box button:hover {
-      background: #e65c00;
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(255,102,0,0.4);
+    }
+
+    .login-box button:active {
+      transform: translateY(0);
     }
 
     .footer-text {
-      margin-top: 20px;
-      font-size: 12px;
-      color: #999;
+      margin-top: 25px;
+      font-size: 11px;
+      color: #777;
+      font-weight: bold;
+    }
+
+    @media (max-width: 400px) {
+      .login-box { width: 90%; margin: 100px auto 20px; }
     }
   </style>
 </head>
@@ -142,28 +182,28 @@
   <div class="login-box">
 
     <div class="user-icon">
-      <img src="https://cdn-icons-png.flaticon.com/512/149/149071.png" alt="Usuário">
+      <span class="material-symbols-outlined">person</span>
     </div>
 
-    <h2>Acesso ao Sistema</h2>
+    <h2>Acesso ao Checklist</h2>
 
     <select id="usuario">
-      <option value="" disabled selected>Selecione o Usuário</option>
+      <option value="" disabled selected>Selecione seu Perfil</option>
       <option value="admin">Administrador</option>
-      <option value="operador">Operador</option>
+      <option value="operador">Operador de Campo</option>
     </select>
 
     <div class="password-container">
-      <input type="password" id="senha" placeholder="Senha">
+      <input type="password" id="senha" placeholder="Sua Senha">
       <span class="material-symbols-outlined toggle-password" onclick="togglePassword()">
         visibility
       </span>
     </div>
 
-    <button onclick="logar()">Entrar</button>
+    <button onclick="logar()">Entrar no Sistema</button>
 
     <div class="footer-text">
-      Mizu Cimentos © 2026
+     © 2026 Mizu Cimentos · Unidade Baraúna
     </div>
 
   </div>
@@ -171,7 +211,6 @@
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
   <script>
-    // Função para mostrar/esconder a senha
     function togglePassword() {
       const inputSenha = document.getElementById("senha");
       const icon = document.querySelector(".toggle-password");
@@ -197,8 +236,8 @@
       if (!user) {
         Swal.fire({
           icon: 'warning',
-          title: 'Atenção',
-          text: 'Selecione um perfil de usuário!',
+          title: 'Perfil não selecionado',
+          text: 'Por favor, selecione quem está acessando o sistema.',
           confirmButtonColor: '#ff6600'
         });
         return;
@@ -206,11 +245,10 @@
 
       if (credenciais[user] === senha) {
         localStorage.setItem("usuarioLogado", user);
-
         Swal.fire({
           icon: 'success',
-          title: 'Bem-vindo!',
-          text: `Acesso como ${user.toUpperCase()} realizado.`,
+          title: 'Autenticado!',
+          text: `Bem-vindo à plataforma Mizu, ${user}.`,
           showConfirmButton: false,
           timer: 1500
         }).then(() => {
@@ -219,8 +257,8 @@
       } else {
         Swal.fire({
           icon: 'error',
-          title: 'Erro no login',
-          text: 'Senha incorreta para este usuário!',
+          title: 'Erro de Acesso',
+          text: 'Senha incorreta para este perfil!',
           confirmButtonColor: '#ff6600'
         });
       }
@@ -228,5 +266,4 @@
   </script>
 
 </body>
-
 </html>
