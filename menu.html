@@ -6,6 +6,10 @@
   <title>Menu Checklist</title>
   <link rel="stylesheet" href="style.css">
   <link rel="manifest" href="manifest.json">
+  
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="supabase-config.js"></script>
+
   <style>
     .titulo-secao-destaque {
       background: #2c3e50; color: #ffffff; padding: 12px 15px; border-radius: 6px;
@@ -80,26 +84,36 @@
 
   <script>
     let usuario = localStorage.getItem("usuarioLogado");
-    
     if (!usuario) { window.location.href = "index.html"; }
 
-    function verificarStatus() {
-        const dataHoje = new Date().toLocaleDateString('pt-BR');
-        const areas = [
-            "Alimentação da Moagem", "Silo Metálico", "Silo Multicâmara", "Moagem Z1M01",
-            "Alimentação de Cru", "Moagem de Cru", "Caixa de Água Industrial", 
-            "Inspeção do Resfriador", "Transporte de Clínquer"
-        ];
+    async function verificarStatus() {
+        
+        const hoje = new Date().toISOString().split('T')[0];
 
-        areas.forEach(area => {
-            const statusSalvo = localStorage.getItem("status_" + area);
-            const botao = document.getElementById("btn-" + area);
+        try {
             
-            if (botao && statusSalvo === dataHoje) {
-                botao.classList.add("checklist-feito");
+            const { data, error } = await _supabase
+                .from('inspecoes')
+                .select('area')
+                .eq('data_checklist', hoje);
+
+            if (error) throw error;
+
+            
+            if (data) {
+                data.forEach(reg => {
+                    const botao = document.getElementById("btn-" + reg.area);
+                    if (botao) {
+                        botao.classList.add("checklist-feito");
+                    }
+                });
             }
-        });
+        } catch (err) {
+            console.error("Erro ao sincronizar status do banco:", err);
+        }
     }
+
+    
     window.onload = verificarStatus;
   </script>
 </body>
